@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>শুভ ২০তম জন্মদিন মিরাজ!</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, #1f1c2c, #928dab);
+            color: white;
+            font-family: 'Baloo Da 2', cursive, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Instruction Text */
+        #instruction {
+            font-size: 1.8rem;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            margin-bottom: 50px;
+            animation: pulse 1.5s infinite;
+            transition: opacity 0.5s ease;
+            z-index: 20;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        /* Message Animations */
+        .message-container {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        #wishText {
+            font-size: 3rem;
+            color: #ff9a9e;
+            text-shadow: 0 0 15px #ff9a9e, 0 0 30px #fecfef;
+            opacity: 0;
+            transform: scale(0.5) translateY(-50px);
+            transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 0 0 15px 0;
+        }
+
+        #memoryText {
+            font-size: 1.2rem;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.5s ease 0.5s;
+            line-height: 1.6;
+        }
+
+        .show {
+            opacity: 1 !important;
+            transform: scale(1) translateY(0) !important;
+        }
+
+        /* 3D Cake & Knife Container */
+        .cake-container {
+            position: relative;
+            width: 260px;
+            height: 220px;
+            cursor: pointer;
+            transition: transform 0.8s ease;
+            margin-top: 80px;
+        }
+
+        .cake-container:hover {
+            transform: scale(1.05);
+        }
+
+        /* Animated Knife */
+        .knife {
+            position: absolute;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 5rem;
+            opacity: 0;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .knife.chop {
+            animation: sliceCake 1.2s forwards;
+        }
+
+        @keyframes sliceCake {
+            0% { top: -150px; opacity: 0; transform: translateX(-50%) rotate(0deg); }
+            20% { top: -80px; opacity: 1; transform: translateX(-50%) rotate(0deg); }
+            50% { top: 60px; opacity: 1; transform: translateX(-50%) rotate(0deg); } /* Hit */
+            80% { top: 130px; opacity: 1; transform: translateX(-50%) rotate(20deg); }
+            100% { top: 250px; opacity: 0; transform: translateX(-50%) rotate(40deg); }
+        }
+
+        /* 3D Cake Design mimicking emoji */
+        .cake {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 140px;
+            display: flex;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .cake-half {
+            width: 130px;
+            height: 100%;
+            background: linear-gradient(to right, #f4d03f, #f39c12);
+            position: absolute;
+            bottom: 0;
+            transition: transform 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .left-half {
+            left: 0;
+            border-radius: 20px 0 0 15px;
+            border-right: 2px solid #b9770e;
+        }
+
+        .right-half {
+            right: 0;
+            border-radius: 0 20px 15px 0;
+            border-left: 2px solid #b9770e;
+        }
+
+        /* Pink Icing */
+        .icing {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: #ff7675;
+        }
+        
+        .left-half .icing {
+            border-radius: 20px 0 30px 10px;
+        }
+        
+        .right-half .icing {
+            border-radius: 0 20px 10px 30px;
+        }
+
+        /* Strawberries / Cherries */
+        .cherry {
+            position: absolute;
+            top: -15px;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle at 30% 30%, #ff4d4d, #c0392b);
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+        }
+        .left-half .cherry { left: 30px; }
+        .right-half .cherry { right: 30px; }
+
+        /* Number 20 Candles */
+        .number-candle {
+            position: absolute;
+            top: -70px;
+            font-size: 70px;
+            font-weight: 800;
+            color: #fff;
+            -webkit-text-stroke: 2px #ff4757;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            z-index: 20;
+        }
+        .left-half .number-candle { right: 15px; } /* The '2' */
+        .right-half .number-candle { left: 15px; }  /* The '0' */
+
+        /* Flames on top of the numbers */
+        .flame {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 30px;
+            background: #ff9d00;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 20px #ff9d00, 0 0 40px #ff9d00, 0 0 60px #ff0000;
+            animation: flicker 0.1s infinite alternate;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            100% { transform: translateX(-50%) scale(1.1); opacity: 1; box-shadow: 0 0 30px #ff9d00, 0 0 50px #ff0000; }
+        }
+
+        /* Cake Cut Splitting Animation */
+        .cake.cut .left-half {
+            transform: translateX(-50px) rotate(-10deg) translateY(20px);
+        }
+        .cake.cut .right-half {
+            transform: translateX(50px) rotate(10deg) translateY(20px);
+        }
+
+        /* Cake Plate */
+        .plate {
+            position: absolute;
+            bottom: -20px;
+            width: 300px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            left: -20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            z-index: -1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="message-container">
+        <h1 id="wishText">শুভ ২০তম জন্মদিন মিরাজ! 🎉</h1>
+        <p id="memoryText">
+            দেখতে দেখতে জীবনের ২০টি বছর পার হয়ে গেল! ক্লাস টু থেকে শুরু হওয়া আমাদের এই পথচলা। 
+            একসাথে কত দুষ্টুমি, পড়াশোনা আর জীবনের কত সুন্দর স্মৃতি আমরা পার করেছি! 
+            তুই শুধু একজন বন্ধুই না, তুই আমার জীবনের একটা বড় অংশ। 
+            দোয়া করি, তোর আগামী দিনগুলো আরও সুন্দর, সফল আর আনন্দে ভরে উঠুক। শুভ জন্মদিন, দোস্ত! ❤️🎂
+        </p>
+    </div>
+
+    <div id="instruction">মিরাজ, কেকের উপর ক্লিক করে কেকটি কাটো! 👇</div>
+
+    <div class="cake-container" id="cakeContainer">
+        <div class="knife" id="knife">🔪</div>
+        
+        <div class="cake" id="cake">
+            <div class="cake-half left-half">
+                <div class="icing"></div>
+                <div class="cherry"></div>
+                <div class="number-candle">
+                    <div class="flame"></div>
+                    2
+                </div>
+            </div>
+            
+            <div class="cake-half right-half">
+                <div class="icing"></div>
+                <div class="cherry"></div>
+                <div class="number-candle">
+                    <div class="flame"></div>
+                    0
+                </div>
+            </div>
+            <div class="plate"></div>
+        </div>
+    </div>
+
+    <script>
+        const cakeContainer = document.getElementById('cakeContainer');
+        const knife = document.getElementById('knife');
+        const cake = document.getElementById('cake');
+        const flames = document.querySelectorAll('.flame');
+        const instruction = document.getElementById('instruction');
+        const wishText = document.getElementById('wishText');
+        const memoryText = document.getElementById('memoryText');
+
+        let isCut = false;
+
+        // Auto Fire Confetti Function
+        function blastConfetti() {
+            var duration = 4 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 10, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#ffffff'] });
+                confetti({ particleCount: 10, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#ffffff'] });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // The Magic Happens on Click
+        cakeContainer.addEventListener('click', () => {
+            if (isCut) return; // Prevent multiple clicks
+            isCut = true;
+
+            // 1. Completely hide the instruction text (Fix applied here)
+            instruction.style.animation = 'none'; // Stop the pulse animation
+            instruction.style.opacity = '0'; // Fade out
+            setTimeout(() => {
+                instruction.style.display = 'none'; // Completely remove it so it doesn't overlap
+            }, 500);
+            
+            cakeContainer.style.cursor = 'default';
+
+            // 2. Start Knife Animation
+            knife.classList.add('chop');
+
+            // 3. Timing the cut logic
+            setTimeout(() => {
+                
+                // A. Blow out the candles
+                flames.forEach(flame => {
+                    flame.style.opacity = '0';
+                });
+
+                // B. Split the cake in half
+                cake.classList.add('cut');
+
+                // C. Blast Confetti Automatically!
+                blastConfetti();
+                
+                // Big center blast
+                confetti({
+                    particleCount: 200,
+                    spread: 120,
+                    origin: { y: 0.5 }
+                });
+
+                // 4. Show the beautiful emotional message after a short delay
+                setTimeout(() => {
+                    wishText.classList.add('show');
+                    memoryText.classList.add('show');
+                    
+                    // Move the cake down to make room for text clearly
+                    cakeContainer.style.transform = "scale(0.7) translateY(200px)";
+                }, 1000);
+
+            }, 600);
+        });
+
+    </script>
+</body>
+</html>
+
